@@ -64,7 +64,7 @@ const Hero = () => {
               transition={{ delay: 0.45 }}
               className="text-lg text-blue-500 font-medium mb-2"
             >
-              PG @prachi.dev
+             
             </motion.div>
 
             <motion.p
