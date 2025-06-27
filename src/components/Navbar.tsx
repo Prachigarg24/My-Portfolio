@@ -58,9 +58,12 @@ const Navbar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-2xl font-bold text-blue-600"
+            className="flex items-center gap-2"
           >
-            Prachi.dev
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text text-xl font-bold border-2 border-blue-600 px-2 py-1 rounded-lg">
+              [PG]
+            </span>
+            <span className="text-blue-600 font-medium">@prachi.dev</span>
           </motion.div>
 
           {/* Desktop Navigation */}
