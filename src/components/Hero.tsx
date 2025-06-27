@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaDownload } from 'react-icons/fa';
@@ -62,9 +61,12 @@ const Hero = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.45 }}
-              className="text-lg text-blue-500 font-medium mb-2"
+              className="text-lg font-medium mb-2 flex items-center justify-center lg:justify-start gap-2"
             >
-              PG @prachi.dev
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text text-2xl font-bold border-2 border-blue-600 px-3 py-1 rounded-lg">
+                [PG]
+              </span>
+              <span className="text-blue-500">@prachi.dev</span>
             </motion.div>
 
             <motion.p
