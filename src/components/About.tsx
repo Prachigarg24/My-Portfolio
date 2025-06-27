@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { FaGraduationCap, FaCode, FaLightbulb } from 'react-icons/fa';
+import { FaGraduationCap, FaCode } from 'react-icons/fa';
 
 const About = () => {
   const [ref, inView] = useInView({
@@ -22,12 +22,6 @@ const About = () => {
       title: 'Full Stack Web Development - Masai School',
       description: 'Intensive full-stack development program specializing in MERN stack',
       icon: FaCode,
-    },
-    {
-      year: '2024',
-      title: 'Yuvashakti Model School',
-      description: 'Completed secondary education with focus on mathematics and science',
-      icon: FaLightbulb,
     },
   ];
 
@@ -86,7 +80,7 @@ const About = () => {
                 <div className="text-gray-600">Projects Completed</div>
               </div>
               <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-3xl font-bold text-green-600 mb-2">2+</div>
+                <div className="text-3xl font-bold text-green-600 mb-2">1+</div>
                 <div className="text-gray-600">Years Learning</div>
               </div>
             </motion.div>

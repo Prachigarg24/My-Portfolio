@@ -58,6 +58,15 @@ const Hero = () => {
               </motion.span>
             </motion.div>
 
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+              className="text-lg text-blue-500 font-medium mb-2"
+            >
+              PG @prachi.dev
+            </motion.div>
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -138,10 +147,12 @@ const Hero = () => {
               className="relative"
             >
               <div className="w-80 h-80 md:w-96 md:h-96 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 p-2">
-                <div className="w-full h-full rounded-full bg-white p-4 flex items-center justify-center">
-                  <div className="w-full h-full rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-6xl font-bold text-blue-600">
-                    PG
-                  </div>
+                <div className="w-full h-full rounded-full bg-white p-2 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src="/lovable-uploads/4614beef-fb30-42c8-9c38-fb6fc04debcb.png"
+                    alt="Prachi Garg - Full Stack Developer"
+                    className="w-full h-full rounded-full object-cover"
+                  />
                 </div>
               </div>
               
