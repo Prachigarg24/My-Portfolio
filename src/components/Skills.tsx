@@ -17,9 +17,7 @@ import {
   SiMongodb, 
   SiFirebase, 
   SiPostman,
-  SiRedux,
-  SiVercel,
-  SiDocker
+  SiRedux
 } from 'react-icons/si';
 
 const Skills = () => {
@@ -54,8 +52,6 @@ const Skills = () => {
       skills: [
         { name: 'GitHub', icon: FaGithub, color: 'text-gray-800', level: 85 },
         { name: 'Postman', icon: SiPostman, color: 'text-orange-600', level: 80 },
-        { name: 'Vercel', icon: SiVercel, color: 'text-black', level: 82 },
-        { name: 'Docker', icon: SiDocker, color: 'text-blue-500', level: 75 },
         { name: 'DSA', icon: FaDatabase, color: 'text-blue-600', level: 75 },
       ]
     }
@@ -153,7 +149,7 @@ const Skills = () => {
           <h3 className="text-2xl font-bold text-gray-900 mb-8 text-center">
             Technologies I Work With
           </h3>
-          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-6">
+          <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-6">
             {[
               { icon: FaHtml5, color: 'text-orange-500', name: 'HTML5' },
               { icon: FaCss3Alt, color: 'text-blue-500', name: 'CSS3' },
@@ -163,8 +159,6 @@ const Skills = () => {
               { icon: SiMongodb, color: 'text-green-500', name: 'MongoDB' },
               { icon: SiTailwindcss, color: 'text-teal-500', name: 'Tailwind' },
               { icon: FaGithub, color: 'text-gray-800', name: 'GitHub' },
-              { icon: SiVercel, color: 'text-black', name: 'Vercel' },
-              { icon: SiDocker, color: 'text-blue-500', name: 'Docker' },
             ].map((tech, index) => (
               <motion.div
                 key={tech.name}

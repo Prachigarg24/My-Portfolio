@@ -12,20 +12,6 @@ const Projects = () => {
 
   const projects = [
     {
-      title: 'StudyGenie – AI-Powered Study Companion',
-      description: 'An intelligent study assistant that helps students create personalized study plans. Students can input syllabus topics and deadlines to receive AI-generated daily schedules, flashcards, and custom quizzes.',
-      features: [
-        'AI-powered personalized study plans',
-        'OpenAI API integration for content generation',
-        'Daily study schedules and flashcards',
-        'Custom quiz generation based on topics',
-        'Automated cron jobs for reminders'
-      ],
-      githubUrl: 'https://github.com/Prachigarg24/smart-study-genie-app.git',
-      liveUrl: 'https://smart-study-genie-app.vercel.app',
-      technologies: ['React', 'Tailwind CSS', 'Node.js', 'Express.js', 'MongoDB', 'OpenAI API', 'Cron Jobs']
-    },
-    {
       title: 'BestBuy Clone',
       description: 'A comprehensive e-commerce platform replicating BestBuy\'s functionality with modern web technologies. Features include user authentication, product catalog, shopping cart, and responsive design.',
       features: [
@@ -74,7 +60,7 @@ const Projects = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <ProjectCard
               key={project.title}
