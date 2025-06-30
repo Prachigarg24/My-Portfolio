@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
@@ -19,7 +18,8 @@ import {
   SiPostman,
   SiRedux,
   SiVercel,
-  SiDocker
+  SiDocker,
+  SiChakraui
 } from 'react-icons/si';
 
 const Skills = () => {
@@ -38,6 +38,7 @@ const Skills = () => {
         { name: 'React', icon: FaReact, color: 'text-cyan-500' },
         { name: 'Redux', icon: SiRedux, color: 'text-purple-600' },
         { name: 'Tailwind CSS', icon: SiTailwindcss, color: 'text-teal-500' },
+        { name: 'Chakra UI', icon: SiChakraui, color: 'text-teal-400' },
       ]
     },
     {
@@ -151,6 +152,7 @@ const Skills = () => {
               { icon: FaNodeJs, color: 'text-green-600', name: 'Node.js' },
               { icon: SiMongodb, color: 'text-green-500', name: 'MongoDB' },
               { icon: SiTailwindcss, color: 'text-teal-500', name: 'Tailwind' },
+              { icon: SiChakraui, color: 'text-teal-400', name: 'Chakra UI' },
               { icon: FaGithub, color: 'text-gray-800', name: 'GitHub' },
               { icon: SiVercel, color: 'text-black', name: 'Vercel' },
               { icon: SiDocker, color: 'text-blue-500', name: 'Docker' },
