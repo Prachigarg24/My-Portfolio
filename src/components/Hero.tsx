@@ -11,7 +11,18 @@ const Hero = () => {
     { icon: FaPhone, href: 'tel:7011605451', label: 'Phone' },
   ];
 
-  const roles = ['Full Stack Developer', 'MERN Developer', 'React Developer', 'JavaScript Developer'];
+  const handleResumeDownload = () => {
+    // Open resume in new tab
+    window.open('/Resume.pdf', '_blank');
+    
+    // Also trigger download
+    const link = document.createElement('a');
+    link.href = '/Resume.pdf';
+    link.download = 'Prachi_Garg_Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 pt-16">
@@ -93,16 +104,15 @@ const Hero = () => {
                 Hire Me
               </motion.button>
               
-              <motion.a
+              <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                href="/Resume.pdf"
-                download
+                onClick={handleResumeDownload}
                 className="px-8 py-3 border-2 border-blue-600 text-blue-600 rounded-full font-medium hover:bg-blue-600 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <FaDownload />
                 Download Resume
-              </motion.a>
+              </motion.button>
             </motion.div>
 
             {/* Social Links */}

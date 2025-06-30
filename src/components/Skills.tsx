@@ -32,31 +32,31 @@ const Skills = () => {
     {
       title: 'Frontend',
       skills: [
-        { name: 'HTML5', icon: FaHtml5, color: 'text-orange-500', level: 90 },
-        { name: 'CSS3', icon: FaCss3Alt, color: 'text-blue-500', level: 85 },
-        { name: 'JavaScript', icon: FaJs, color: 'text-yellow-500', level: 88 },
-        { name: 'React', icon: FaReact, color: 'text-cyan-500', level: 85 },
-        { name: 'Redux', icon: SiRedux, color: 'text-purple-600', level: 80 },
-        { name: 'Tailwind CSS', icon: SiTailwindcss, color: 'text-teal-500', level: 90 },
+        { name: 'HTML5', icon: FaHtml5, color: 'text-orange-500' },
+        { name: 'CSS3', icon: FaCss3Alt, color: 'text-blue-500' },
+        { name: 'JavaScript', icon: FaJs, color: 'text-yellow-500' },
+        { name: 'React', icon: FaReact, color: 'text-cyan-500' },
+        { name: 'Redux', icon: SiRedux, color: 'text-purple-600' },
+        { name: 'Tailwind CSS', icon: SiTailwindcss, color: 'text-teal-500' },
       ]
     },
     {
       title: 'Backend',
       skills: [
-        { name: 'Node.js', icon: FaNodeJs, color: 'text-green-600', level: 82 },
-        { name: 'Express.js', icon: SiExpress, color: 'text-gray-700', level: 80 },
-        { name: 'MongoDB', icon: SiMongodb, color: 'text-green-500', level: 78 },
-        { name: 'Firebase', icon: SiFirebase, color: 'text-yellow-600', level: 75 },
+        { name: 'Node.js', icon: FaNodeJs, color: 'text-green-600' },
+        { name: 'Express.js', icon: SiExpress, color: 'text-gray-700' },
+        { name: 'MongoDB', icon: SiMongodb, color: 'text-green-500' },
+        { name: 'Firebase', icon: SiFirebase, color: 'text-yellow-600' },
       ]
     },
     {
       title: 'Tools & Others',
       skills: [
-        { name: 'GitHub', icon: FaGithub, color: 'text-gray-800', level: 85 },
-        { name: 'Postman', icon: SiPostman, color: 'text-orange-600', level: 80 },
-        { name: 'Vercel', icon: SiVercel, color: 'text-black', level: 82 },
-        { name: 'Docker', icon: SiDocker, color: 'text-blue-500', level: 75 },
-        { name: 'DSA', icon: FaDatabase, color: 'text-blue-600', level: 75 },
+        { name: 'GitHub', icon: FaGithub, color: 'text-gray-800' },
+        { name: 'Postman', icon: SiPostman, color: 'text-orange-600' },
+        { name: 'Vercel', icon: SiVercel, color: 'text-black' },
+        { name: 'Docker', icon: SiDocker, color: 'text-blue-500' },
+        { name: 'DSA', icon: FaDatabase, color: 'text-blue-600' },
       ]
     }
   ];
@@ -110,7 +110,7 @@ const Skills = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
                 {category.title}
               </h3>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {category.skills.map((skill, skillIndex) => (
                   <motion.div
                     key={skill.name}
@@ -123,18 +123,7 @@ const Skills = () => {
                       <skill.icon />
                     </div>
                     <div className="flex-grow">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium text-gray-900">{skill.name}</span>
-                        <span className="text-sm text-gray-600">{skill.level}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={inView ? { width: `${skill.level}%` } : {}}
-                          transition={{ duration: 1, delay: (categoryIndex * 0.2) + (skillIndex * 0.1) + 0.5 }}
-                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full"
-                        />
-                      </div>
+                      <span className="font-medium text-gray-900 text-lg">{skill.name}</span>
                     </div>
                   </motion.div>
                 ))}
