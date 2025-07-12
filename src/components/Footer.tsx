@@ -156,7 +156,7 @@ const Footer = () => {
         >
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-1 text-gray-300 mb-4 md:mb-0">
-              <span>© 2024 Prachi Garg. Made with</span>
+              <span>© 2025 Prachi Garg. Made with</span>
               <motion.span
                 animate={{
                   scale: [1, 1.2, 1],
