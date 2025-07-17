@@ -23,7 +23,8 @@ const Projects = () => {
       ],
       githubUrl: 'https://github.com/Prachigarg24/Voting-App_Vote-Now.git',
       liveUrl: 'https://voting-app-vote-now.vercel.app',
-      technologies: ['React 18', 'TypeScript', 'Vite', 'Tailwind CSS', 'Shadcn/ui', 'React Router DOM', 'React Context API', 'Radix UI', 'Lucide React', 'React Hook Form', 'Zod']
+      technologies: ['React 18', 'TypeScript', 'Vite', 'Tailwind CSS', 'Shadcn/ui', 'React Router DOM', 'React Context API', 'Radix UI', 'Lucide React', 'React Hook Form', 'Zod'],
+      imageUrl: '/lovable-uploads/c983a7a6-8865-4092-bc42-99c6b75d4f62.png'
     },
     {
       title: 'StudyGenie – AI-Powered Study Companion',
@@ -37,7 +38,8 @@ const Projects = () => {
       ],
       githubUrl: 'https://github.com/Prachigarg24/smart-study-genie-app.git',
       liveUrl: 'https://smart-study-genie-app.vercel.app',
-      technologies: ['React', 'Tailwind CSS', 'Node.js', 'Express.js', 'MongoDB', 'OpenAI API', 'Cron Jobs']
+      technologies: ['React', 'Tailwind CSS', 'Node.js', 'Express.js', 'MongoDB', 'OpenAI API', 'Cron Jobs'],
+      imageUrl: '/lovable-uploads/b01878ae-ea1e-4606-b13b-3d6ad04ef4de.png'
     },
     {
       title: 'BestBuy Clone',
@@ -51,7 +53,8 @@ const Projects = () => {
       ],
       githubUrl: 'https://github.com/Prachigarg24/BestBuy-Clone.git',
       liveUrl: 'https://best-buy-clone-two.vercel.app/',
-      technologies: ['React', 'Firebase', 'CSS3', 'JavaScript', 'Responsive Design']
+      technologies: ['React', 'Firebase', 'CSS3', 'JavaScript', 'Responsive Design'],
+      imageUrl: '/lovable-uploads/94c637d3-229f-4202-8598-eeb370299c79.png'
     },
     {
       title: 'SocialSynced',
@@ -65,7 +68,8 @@ const Projects = () => {
       ],
       githubUrl: 'https://github.com/syedamaan7733/4436.git',
       liveUrl: 'https://4436-euiu.vercel.app/index.html',
-      technologies: ['HTML5', 'CSS3', 'JavaScript', 'Node.js', 'Express.js']
+      technologies: ['HTML5', 'CSS3', 'JavaScript', 'Node.js', 'Express.js'],
+      imageUrl: '/lovable-uploads/704be81b-5195-420f-bb77-8f0f806817ff.png'
     }
   ];
 

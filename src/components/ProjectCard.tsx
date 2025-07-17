@@ -11,6 +11,7 @@ interface ProjectCardProps {
   liveUrl: string;
   technologies: string[];
   index: number;
+  imageUrl?: string;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -20,7 +21,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   githubUrl,
   liveUrl,
   technologies,
-  index
+  index,
+  imageUrl
 }) => {
   return (
     <motion.div
@@ -31,18 +33,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
       whileHover={{ y: -10 }}
       className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden group"
     >
-      {/* Project Image Placeholder */}
-      <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300"></div>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0.7 }}
-            whileHover={{ scale: 1, opacity: 1 }}
-            className="text-white text-6xl"
-          >
-            <FaCode />
-          </motion.div>
-        </div>
+      {/* Project Image */}
+      <div className="h-48 relative overflow-hidden">
+        {imageUrl ? (
+          <>
+            <img 
+              src={imageUrl} 
+              alt={title}
+              className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300"></div>
+          </>
+        ) : (
+          <>
+            <div className="h-full bg-gradient-to-br from-blue-400 to-purple-500 relative">
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300"></div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0.7 }}
+                  whileHover={{ scale: 1, opacity: 1 }}
+                  className="text-white text-6xl"
+                >
+                  <FaCode />
+                </motion.div>
+              </div>
+            </div>
+          </>
+        )}
         
         {/* Overlay with links */}
         <div className="absolute inset-0 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
