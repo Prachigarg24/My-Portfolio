@@ -12,6 +12,20 @@ const Projects = () => {
 
   const projects = [
     {
+      title: 'Voting App - Vote Now',
+      description: 'A comprehensive online election management system with secure voter authentication and real-time vote tracking. This frontend React application showcases modern development skills with TypeScript and advanced UI components.',
+      features: [
+        'Digital Voting Platform with secure voter authentication and real-time vote tracking',
+        'Multi-language Support with internationalization features for better accessibility',
+        'Biometric Integration with camera capture for voter verification and profile management',
+        'Real-time Election Dashboard displaying live results and voter statistics',
+        'Responsive Design with mobile-first approach and dark/light theme support'
+      ],
+      githubUrl: 'https://github.com/Prachigarg24/Voting-App_Vote-Now.git',
+      liveUrl: 'https://voting-app-vote-now.vercel.app',
+      technologies: ['React 18', 'TypeScript', 'Vite', 'Tailwind CSS', 'Shadcn/ui', 'React Router DOM', 'React Context API', 'Radix UI', 'Lucide React', 'React Hook Form', 'Zod']
+    },
+    {
       title: 'StudyGenie – AI-Powered Study Companion',
       description: 'An intelligent study assistant that helps students create personalized study plans. Students can input syllabus topics and deadlines to receive AI-generated daily schedules, flashcards, and custom quizzes.',
       features: [
