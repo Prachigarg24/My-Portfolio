@@ -1,1 +1,14 @@
 project_id = "pywqnxuprfefbxgcvdtl"
+
+# The local development settings
+[local]
+  # Port to use for the local development server
+  # NOTE: The CLI will also use this port for the API server
+  port = 54321
+
+  # Port used by the local development server to serve content  
+  # NOTE: This is the port that your application will connect to
+  api_port = 54321
+
+[functions.send-contact-email]
+verify_jwt = false
