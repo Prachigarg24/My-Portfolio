@@ -190,9 +190,17 @@ const Contact = () => {
             <h3 className="text-2xl font-bold text-gray-900 mb-6">Send Me a Message</h3>
             
             {submitMessage && (
-              <div className={`p-4 rounded-lg ${submitMessage.includes('success') ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-4 rounded-lg mb-6 ${
+                  submitMessage.includes('success') 
+                    ? 'bg-green-100 text-green-800' 
+                    : 'bg-red-100 text-red-800'
+                }`}
+              >
                 {submitMessage}
-              </div>
+              </motion.div>
             )}
             
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -291,8 +299,21 @@ const Contact = () => {
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                <FaPaperPlane />
-                <span>{isSubmitting ? 'Sending...' : 'Send Message'}</span>
+                {isSubmitting ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <FaPaperPlane />
+                    <span>Send Message</span>
+                  </>
+                )}
               </motion.button>
             </form>
           </motion.div>
