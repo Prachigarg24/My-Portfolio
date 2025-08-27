@@ -50,10 +50,14 @@ const Contact = () => {
 
       if (error) {
         console.error('Supabase function error:', error);
-        throw error;
+        throw new Error(error.message || 'Failed to send message');
       }
 
-      setSubmitMessage('Message sent successfully! Thank you for reaching out.');
+      if (data?.success) {
+        setSubmitMessage(data.message || 'Message sent successfully! Thank you for reaching out.');
+      } else {
+        throw new Error(data?.error || 'Failed to send message');
+      }
       
       // Reset form
       setFormData({
@@ -62,9 +66,10 @@ const Contact = () => {
         subject: '',
         message: ''
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
-      setSubmitMessage(`Failed to send message: ${error.message || 'Please try again.'}`);
+      const errorMessage = error.message || 'Failed to send message. Please try again.';
+      setSubmitMessage(`Error: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
