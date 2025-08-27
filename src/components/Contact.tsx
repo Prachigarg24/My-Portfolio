@@ -33,7 +33,10 @@ const Contact = () => {
     setIsSubmitting(true);
     setSubmitMessage('');
 
+    console.log('Form submission started with data:', formData);
+
     try {
+      console.log('Calling Supabase function...');
       const { data, error } = await supabase.functions.invoke('send-contact-email', {
         body: {
           name: formData.name,
@@ -43,7 +46,10 @@ const Contact = () => {
         },
       });
 
+      console.log('Supabase function response:', { data, error });
+
       if (error) {
+        console.error('Supabase function error:', error);
         throw error;
       }
 
@@ -58,7 +64,7 @@ const Contact = () => {
       });
     } catch (error) {
       console.error('Error sending message:', error);
-      setSubmitMessage('Failed to send message. Please try again.');
+      setSubmitMessage(`Failed to send message: ${error.message || 'Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }
