@@ -1,6 +1,100 @@
 // @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+
+// Gmail transporter configuration
+const createGmailTransporter = (gmailPassword: string) => {
+  return {
+    service: 'gmail',
+    auth: {
+      user: 'prachigarg858@gmail.com',
+      pass: gmailPassword // Gmail App Password
+    }
+  };
+};
+
+// Send email function (nodemailer-style)
+const sendMail = async (transporter: any, mailOptions: {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}) => {
+  // Convert to base64 auth
+  const auth = btoa(`${transporter.auth.user}:${transporter.auth.pass}`);
+  
+  // Create email content
+  const emailContent = [
+    `From: ${mailOptions.from}`,
+    `To: ${mailOptions.to}`,
+    `Subject: ${mailOptions.subject}`,
+    `Content-Type: text/html; charset=UTF-8`,
+    ``,
+    mailOptions.html
+  ].join('\r\n');
+
+  // Send via Gmail SMTP using direct fetch to Gmail API
+  const response = await fetch('https://www.googleapis.com/upload/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Basic ${auth}`,
+      'Content-Type': 'message/rfc822',
+    },
+    body: emailContent
+  });
+
+  return response;
+};
+
+// Auto-reply function
+const sendAutoReply = async (transporter: any, toEmail: string, userName: string, originalMessage: string) => {
+  await sendMail(transporter, {
+    from: 'prachigarg858@gmail.com',
+    to: toEmail,
+    subject: 'Thank you for contacting Prachi Garg!',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #4A90E2;">Thank you for getting in touch!</h2>
+        <p>Hi ${userName},</p>
+        <p>Thank you for getting in touch with me through my portfolio website. I appreciate your interest and will get back to you shortly.</p>
+        
+        <p>If your message was regarding collaboration, job opportunity, or interview discussion, I'm excited to connect and explore further!</p>
+        
+        <p>Meanwhile, feel free to explore more about my work and projects on my portfolio.</p>
+        
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+          <p><strong>Your message:</strong></p>
+          <p>${originalMessage.replace(/\n/g, '<br>')}</p>
+        </div>
+        
+        <p>Best regards,<br><strong>Prachi Garg</strong><br>Full Stack Developer</p>
+        <hr>
+        <p style="color: #666; font-size: 12px;">This is an automated response.</p>
+      </div>
+    `
+  });
+};
+
+// Send notification to owner
+const sendOwnerNotification = async (transporter: any, name: string, email: string, subject: string, message: string) => {
+  await sendMail(transporter, {
+    from: 'prachigarg858@gmail.com',
+    to: 'prachigarg858@gmail.com',
+    subject: `New Contact Message from ${name}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333;">New Contact Form Message</h2>
+        <p><strong>From:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject || 'Contact from Portfolio'}</p>
+        <hr>
+        <p><strong>Message:</strong></p>
+        <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+          ${message.replace(/\n/g, '<br>')}
+        </div>
+      </div>
+    `
+  });
+};
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -113,80 +207,24 @@ serve(async (req: Request) => {
 
     console.log('Message saved successfully to database');
 
-    // Send emails using Gmail SMTP
+    // Send emails using nodemailer-style Gmail transporter
     if (gmailAppPassword) {
-      console.log('Attempting to send emails via Gmail SMTP...');
+      console.log('Attempting to send emails via nodemailer-style Gmail transporter...');
       try {
-        const client = new SMTPClient({
-          connection: {
-            hostname: "smtp.gmail.com",
-            port: 587,
-            tls: true,
-            auth: {
-              username: "prachigarg858@gmail.com",
-              password: gmailAppPassword,
-            },
-          },
-        });
+        const transporter = createGmailTransporter(gmailAppPassword);
 
-        // Email to owner (you)
+        // Send notification email to owner
         console.log('Sending notification email to owner...');
-        await client.send({
-          from: "prachigarg858@gmail.com",
-          to: "prachigarg858@gmail.com",
-          subject: `New Contact Message from ${name}`,
-          content: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #333;">New Contact Form Message</h2>
-              <p><strong>From:</strong> ${name}</p>
-              <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Subject:</strong> ${subject || 'Contact from Portfolio'}</p>
-              <hr>
-              <p><strong>Message:</strong></p>
-              <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
-                ${message.replace(/\n/g, '<br>')}
-              </div>
-            </div>
-          `,
-          html: true,
-        });
-
+        await sendOwnerNotification(transporter, name, email, subject || 'Contact from Portfolio', message);
         console.log('Owner notification email sent successfully');
 
-        // Confirmation email to user
-        console.log('Sending confirmation email to user...');
-        await client.send({
-          from: "prachigarg858@gmail.com",
-          to: email,
-          subject: 'Thank you for contacting Prachi Garg',
-          content: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2 style="color: #4A90E2;">Thank you for getting in touch!</h2>
-              <p>Hi ${name},</p>
-              <p>Thank you for getting in touch with me through my portfolio website. I appreciate your interest and will get back to you shortly.</p>
-              
-              <p>If your message was regarding collaboration, job opportunity, or interview discussion, I'm excited to connect and explore further!</p>
-              
-              <p>Meanwhile, feel free to explore more about my work and projects on my portfolio.</p>
-              
-              <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                <p><strong>Your message:</strong></p>
-                <p>${message.replace(/\n/g, '<br>')}</p>
-              </div>
-              
-              <p>Best regards,<br><strong>Prachi Garg</strong><br>Full Stack Developer</p>
-              <hr>
-              <p style="color: #666; font-size: 12px;">This is an automated response.</p>
-            </div>
-          `,
-          html: true,
-        });
-
+        // Send auto-reply to user
+        console.log('Sending auto-reply to user...');
+        await sendAutoReply(transporter, email, name, message);
         console.log('User confirmation email sent successfully');
-        await client.close();
         
       } catch (emailError) {
-        console.error('Gmail SMTP error:', emailError);
+        console.error('Gmail transporter error:', emailError);
         // Don't fail the request if email fails, message is already saved
       }
     } else {
