@@ -1,5 +1,6 @@
 // @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { Resend } from "npm:resend@2.0.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -59,14 +60,16 @@ serve(async (req: Request) => {
     // Get environment variables
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const resendApiKey = Deno.env.get('RESEND_API_KEY');
     
     console.log('Environment check:', { 
       hasSupabaseUrl: !!supabaseUrl, 
-      hasServiceKey: !!supabaseServiceKey 
+      hasServiceKey: !!supabaseServiceKey,
+      hasResendKey: !!resendApiKey
     });
 
     if (!supabaseUrl || !supabaseServiceKey) {
-      console.error('Missing environment variables');
+      console.error('Missing Supabase environment variables');
       return new Response(
         JSON.stringify({ error: 'Server configuration error' }),
         {
@@ -110,136 +113,76 @@ serve(async (req: Request) => {
 
     console.log('Message saved successfully to database');
 
-    // Send emails using Gmail SMTP
-    const gmailPassword = Deno.env.get('GMAIL_APP_PASSWORD');
-    if (gmailPassword) {
-      console.log('Attempting to send email notification...');
+    // Send emails using Resend
+    if (resendApiKey) {
+      console.log('Attempting to send emails via Resend...');
       try {
-        // Email to owner
-        const emailToOwner = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #333;">New Contact Form Message</h2>
-            <p><strong>From:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Subject:</strong> ${subject || 'Contact from Portfolio'}</p>
-            <hr>
-            <p><strong>Message:</strong></p>
-            <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
-              ${message.replace(/\n/g, '<br>')}
+        const resend = new Resend(resendApiKey);
+
+        // Email to owner (you)
+        const ownerEmailResponse = await resend.emails.send({
+          from: 'Portfolio Contact <onboarding@resend.dev>',
+          to: ['prachigarg858@gmail.com'],
+          subject: `New Contact Message from ${name}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #333;">New Contact Form Message</h2>
+              <p><strong>From:</strong> ${name}</p>
+              <p><strong>Email:</strong> ${email}</p>
+              <p><strong>Subject:</strong> ${subject || 'Contact from Portfolio'}</p>
+              <hr>
+              <p><strong>Message:</strong></p>
+              <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
+                ${message.replace(/\n/g, '<br>')}
+              </div>
             </div>
-          </div>
-        `;
+          `,
+        });
+
+        console.log('Owner email sent:', ownerEmailResponse);
 
         // Confirmation email to user
-        const confirmationEmail = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4A90E2;">Thank you for getting in touch!</h2>
-            <p>Hi ${name},</p>
-            <p>Thank you for getting in touch with me through my portfolio website. I appreciate your interest and will get back to you shortly.</p>
-            
-            <p>If your message was regarding collaboration, job opportunity, or interview discussion, I'm excited to connect and explore further!</p>
-            
-            <p>Meanwhile, feel free to explore more about my work and projects on my portfolio.</p>
-            
-            <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
-              <p><strong>Your message:</strong></p>
-              <p>${message.replace(/\n/g, '<br>')}</p>
-            </div>
-            
-            <p>Best regards,<br><strong>Prachi Garg</strong><br>Full Stack Developer</p>
-            <hr>
-            <p style="color: #666; font-size: 12px;">This is an automated response.</p>
-          </div>
-        `;
-
-        // Send email to owner
-        await sendGmailEmail(gmailPassword, {
-          to: 'prachigarg858@gmail.com',
-          subject: `New Contact Message from ${name}`,
-          html: emailToOwner
-        });
-
-        // Send confirmation to user
-        await sendGmailEmail(gmailPassword, {
-          to: email,
+        const userEmailResponse = await resend.emails.send({
+          from: 'Prachi Garg <onboarding@resend.dev>',
+          to: [email],
           subject: 'Thank you for contacting Prachi Garg',
-          html: confirmationEmail
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color: #4A90E2;">Thank you for getting in touch!</h2>
+              <p>Hi ${name},</p>
+              <p>Thank you for getting in touch with me through my portfolio website. I appreciate your interest and will get back to you shortly.</p>
+              
+              <p>If your message was regarding collaboration, job opportunity, or interview discussion, I'm excited to connect and explore further!</p>
+              
+              <p>Meanwhile, feel free to explore more about my work and projects on my portfolio.</p>
+              
+              <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                <p><strong>Your message:</strong></p>
+                <p>${message.replace(/\n/g, '<br>')}</p>
+              </div>
+              
+              <p>Best regards,<br><strong>Prachi Garg</strong><br>Full Stack Developer</p>
+              <hr>
+              <p style="color: #666; font-size: 12px;">This is an automated response.</p>
+            </div>
+          `,
         });
 
-        console.log('Both emails sent successfully');
+        console.log('User confirmation email sent:', userEmailResponse);
         
       } catch (emailError) {
         console.error('Email sending error:', emailError);
         // Don't fail the request if email fails, message is already saved
       }
+    } else {
+      console.log('No Resend API key found, skipping email sending');
     }
-
-// Gmail SMTP function
-async function sendGmailEmail(password: string, emailData: { to: string; subject: string; html: string }) {
-  const smtpServer = 'smtp.gmail.com';
-  const smtpPort = 587;
-  const username = 'prachigarg858@gmail.com';
-
-  try {
-    // Create SMTP connection
-    const conn = await Deno.connect({
-      hostname: smtpServer,
-      port: smtpPort,
-    });
-
-    const textEncoder = new TextEncoder();
-    const textDecoder = new TextDecoder();
-
-    // Helper function to send command and read response
-    async function sendCommand(command: string): Promise<string> {
-      await conn.write(textEncoder.encode(command + '\r\n'));
-      const buffer = new Uint8Array(1024);
-      const bytesRead = await conn.read(buffer);
-      return textDecoder.decode(buffer.subarray(0, bytesRead || 0));
-    }
-
-    // SMTP conversation
-    await sendCommand('EHLO localhost');
-    await sendCommand('STARTTLS');
-    
-    // After STARTTLS, we need to upgrade to TLS
-    conn.close();
-    
-    // For now, let's use a simpler approach with fetch to a webhook service
-    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        service_id: 'gmail',
-        template_id: 'template_contact',
-        user_id: 'user_id',
-        template_params: {
-          to_email: emailData.to,
-          subject: emailData.subject,
-          message: emailData.html,
-          from_email: username,
-        }
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    console.log(`Email sent successfully to ${emailData.to}`);
-  } catch (error) {
-    console.error('SMTP Error:', error);
-    throw error;
-  }
-}
 
     console.log('Returning success response');
     return new Response(
       JSON.stringify({ 
         success: true,
-        message: 'Message sent successfully! Thank you for reaching out. I will get back to you soon.' 
+        message: 'Message sent successfully! Thank you for reaching out. You will receive a confirmation email shortly.' 
       }),
       {
         status: 200,
