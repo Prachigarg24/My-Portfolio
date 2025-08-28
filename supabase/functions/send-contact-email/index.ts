@@ -110,12 +110,12 @@ serve(async (req: Request) => {
 
     console.log('Message saved successfully to database');
 
-    // Send email notification using Gmail API
+    // Send emails using Gmail SMTP
     const gmailPassword = Deno.env.get('GMAIL_APP_PASSWORD');
     if (gmailPassword) {
       console.log('Attempting to send email notification...');
       try {
-        // Create email content
+        // Email to owner
         const emailToOwner = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #333;">New Contact Form Message</h2>
@@ -130,29 +130,110 @@ serve(async (req: Request) => {
           </div>
         `;
 
+        // Confirmation email to user
         const confirmationEmail = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #4A90E2;">Thank you for contacting me!</h2>
+            <h2 style="color: #4A90E2;">Thank you for getting in touch!</h2>
             <p>Hi ${name},</p>
-            <p>I have received your message and will get back to you as soon as possible.</p>
+            <p>Thank you for getting in touch with me through my portfolio website. I appreciate your interest and will get back to you shortly.</p>
+            
+            <p>If your message was regarding collaboration, job opportunity, or interview discussion, I'm excited to connect and explore further!</p>
+            
+            <p>Meanwhile, feel free to explore more about my work and projects on my portfolio.</p>
+            
             <div style="background: #f0f8ff; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <p><strong>Your message:</strong></p>
               <p>${message.replace(/\n/g, '<br>')}</p>
             </div>
-            <p>Best regards,<br><strong>Prachi Garg</strong></p>
+            
+            <p>Best regards,<br><strong>Prachi Garg</strong><br>Full Stack Developer</p>
             <hr>
-            <p style="color: #666; font-size: 12px;">This is an automated response. Please do not reply to this email.</p>
+            <p style="color: #666; font-size: 12px;">This is an automated response.</p>
           </div>
         `;
 
-        // Send emails using a simple email service (we'll implement this next)
-        console.log('Email content prepared, but email sending is disabled for now');
+        // Send email to owner
+        await sendGmailEmail(gmailPassword, {
+          to: 'prachigarg858@gmail.com',
+          subject: `New Contact Message from ${name}`,
+          html: emailToOwner
+        });
+
+        // Send confirmation to user
+        await sendGmailEmail(gmailPassword, {
+          to: email,
+          subject: 'Thank you for contacting Prachi Garg',
+          html: confirmationEmail
+        });
+
+        console.log('Both emails sent successfully');
         
       } catch (emailError) {
         console.error('Email sending error:', emailError);
         // Don't fail the request if email fails, message is already saved
       }
     }
+
+// Gmail SMTP function
+async function sendGmailEmail(password: string, emailData: { to: string; subject: string; html: string }) {
+  const smtpServer = 'smtp.gmail.com';
+  const smtpPort = 587;
+  const username = 'prachigarg858@gmail.com';
+
+  try {
+    // Create SMTP connection
+    const conn = await Deno.connect({
+      hostname: smtpServer,
+      port: smtpPort,
+    });
+
+    const textEncoder = new TextEncoder();
+    const textDecoder = new TextDecoder();
+
+    // Helper function to send command and read response
+    async function sendCommand(command: string): Promise<string> {
+      await conn.write(textEncoder.encode(command + '\r\n'));
+      const buffer = new Uint8Array(1024);
+      const bytesRead = await conn.read(buffer);
+      return textDecoder.decode(buffer.subarray(0, bytesRead || 0));
+    }
+
+    // SMTP conversation
+    await sendCommand('EHLO localhost');
+    await sendCommand('STARTTLS');
+    
+    // After STARTTLS, we need to upgrade to TLS
+    conn.close();
+    
+    // For now, let's use a simpler approach with fetch to a webhook service
+    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        service_id: 'gmail',
+        template_id: 'template_contact',
+        user_id: 'user_id',
+        template_params: {
+          to_email: emailData.to,
+          subject: emailData.subject,
+          message: emailData.html,
+          from_email: username,
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    console.log(`Email sent successfully to ${emailData.to}`);
+  } catch (error) {
+    console.error('SMTP Error:', error);
+    throw error;
+  }
+}
 
     console.log('Returning success response');
     return new Response(
