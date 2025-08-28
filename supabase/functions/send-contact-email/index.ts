@@ -1,6 +1,6 @@
 // @ts-ignore
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -60,12 +60,12 @@ serve(async (req: Request) => {
     // Get environment variables
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    const resendApiKey = Deno.env.get('RESEND_API_KEY');
+    const gmailAppPassword = Deno.env.get('GMAIL_APP_PASSWORD');
     
     console.log('Environment check:', { 
       hasSupabaseUrl: !!supabaseUrl, 
       hasServiceKey: !!supabaseServiceKey,
-      hasResendKey: !!resendApiKey
+      hasGmailPassword: !!gmailAppPassword
     });
 
     if (!supabaseUrl || !supabaseServiceKey) {
@@ -113,18 +113,29 @@ serve(async (req: Request) => {
 
     console.log('Message saved successfully to database');
 
-    // Send emails using Resend
-    if (resendApiKey) {
-      console.log('Attempting to send emails via Resend...');
+    // Send emails using Gmail SMTP
+    if (gmailAppPassword) {
+      console.log('Attempting to send emails via Gmail SMTP...');
       try {
-        const resend = new Resend(resendApiKey);
+        const client = new SMTPClient({
+          connection: {
+            hostname: "smtp.gmail.com",
+            port: 587,
+            tls: true,
+            auth: {
+              username: "prachigarg858@gmail.com",
+              password: gmailAppPassword,
+            },
+          },
+        });
 
         // Email to owner (you)
-        const ownerEmailResponse = await resend.emails.send({
-          from: 'Portfolio Contact <onboarding@resend.dev>',
-          to: ['prachigarg858@gmail.com'],
+        console.log('Sending notification email to owner...');
+        await client.send({
+          from: "prachigarg858@gmail.com",
+          to: "prachigarg858@gmail.com",
           subject: `New Contact Message from ${name}`,
-          html: `
+          content: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #333;">New Contact Form Message</h2>
               <p><strong>From:</strong> ${name}</p>
@@ -137,16 +148,18 @@ serve(async (req: Request) => {
               </div>
             </div>
           `,
+          html: true,
         });
 
-        console.log('Owner email sent:', ownerEmailResponse);
+        console.log('Owner notification email sent successfully');
 
         // Confirmation email to user
-        const userEmailResponse = await resend.emails.send({
-          from: 'Prachi Garg <onboarding@resend.dev>',
-          to: [email],
+        console.log('Sending confirmation email to user...');
+        await client.send({
+          from: "prachigarg858@gmail.com",
+          to: email,
           subject: 'Thank you for contacting Prachi Garg',
-          html: `
+          content: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #4A90E2;">Thank you for getting in touch!</h2>
               <p>Hi ${name},</p>
@@ -166,16 +179,18 @@ serve(async (req: Request) => {
               <p style="color: #666; font-size: 12px;">This is an automated response.</p>
             </div>
           `,
+          html: true,
         });
 
-        console.log('User confirmation email sent:', userEmailResponse);
+        console.log('User confirmation email sent successfully');
+        await client.close();
         
       } catch (emailError) {
-        console.error('Email sending error:', emailError);
+        console.error('Gmail SMTP error:', emailError);
         // Don't fail the request if email fails, message is already saved
       }
     } else {
-      console.log('No Resend API key found, skipping email sending');
+      console.log('No Gmail app password found, skipping email sending');
     }
 
     console.log('Returning success response');
